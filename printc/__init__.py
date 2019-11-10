@@ -1,5 +1,16 @@
+import os
 import sys
 from typing import Any, Tuple
+
+if os.name == "nt":
+    try:
+        import colorama
+        colorama.init()
+    except ImportError:
+        print("Please install colorama!")
+
+
+ESC = "\033"
 
 
 def _is_rgb_tuple(item: Any) -> bool:
@@ -40,11 +51,11 @@ def printc(*args, color=15, file=sys.stdout, **kwargs):
     if color != 15 and file is sys.stdout and sys.stdout.isatty():
         args = list(args)
         if is_base:
-            args[0] = f"\033[38;5;{color}m{args[0]}"
+            args[0] = f"{ESC}[38;5;{color}m{args[0]}"
         else:
             color = ";".join(map(str, color))
-            args[0] = f"\033[38;2;{color}m{args[0]}"
-        args[-1] = f"{args[-1]}\033[0m"
+            args[0] = f"{ESC}[38;2;{color}m{args[0]}"
+        args[-1] = f"{args[-1]}{ESC}[0m"
 
     print(*args, file=file, **kwargs)
 
@@ -56,13 +67,19 @@ def main():
     demo_funs = [item for item in dir(demos) if item.startswith("demo_")]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--color", "-c", help="[0..15]", type=int, default=15,
-                        required=False)
-    parser.add_argument("--demo", required=False, default=None, type=int,
-                        choices=range(len(demo_funs)), help="print some colors")
-    parser.add_argument("-n", action="store_true", required=False,
-                        default=False, help="do not output the trailing newline")
-    parser.add_argument("text", nargs="*")
+    parser.add_argument(
+        "--color", "-c",
+        help="[0..15]", type=int, default=15, required=False)
+    parser.add_argument(
+        "--demo",
+        choices=range(len(demo_funs)), default=None, required=False, type=int,
+        help="print some colors")
+    parser.add_argument(
+        "-n",
+        action="store_true", required=False, default=False,
+        help="do not output the trailing newline")
+    parser.add_argument(
+        "text", nargs="*")
     args = parser.parse_args()
 
     if args.demo is not None:
