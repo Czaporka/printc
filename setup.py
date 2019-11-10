@@ -1,6 +1,7 @@
 import setuptools
 from pathlib import Path
 
+
 long_description = Path('README.md').read_text()
 
 setuptools.setup(
@@ -9,6 +10,9 @@ setuptools.setup(
     author="Filip Wiechec",
     author_email="filip.wiechec@gmail.com",
     description="Print with colors. Eight of them.",
+    entry_points = {
+        "console_scripts": ["printc=printc:main"],
+    },
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/filwie/printc",
